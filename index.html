@@ -11,14 +11,23 @@
 <body>
   <div class="app-container">
     <div class="main">
-      <div class="temp"></div>
-      <div class="location"></div>
-      <div class="datetime"></div>
-      <div class="weather-icon">&#x2601;</div>
-      <div class="weather-description"></div>
+      <div class="main-content">
+        <div class="loading-spinner" style="display:none;">
+          <div class="spinner"></div>
+          <div class="loading-text">Loading...</div>
+        </div>
+        <div class="temp"></div>
+        <div class="location"></div>
+        <div class="datetime"></div>
+        <div class="weather-icon">&#x2601;</div>
+        <div class="weather-description"></div>
+      </div>
     </div>
 
     <div class="sidebar">
+      <div class="theme-switcher">
+        <button id="toggle-theme">🌙 Dark Mode</button>
+      </div>
       <div class="error-message"></div>
       <div class="search">
         <input type="text" placeholder="Search Location..." />
@@ -61,11 +70,10 @@
         <h3>Favorite Cities</h3>
         <ul class="favorite-cities-list"></ul>
       </div>
+      <div class="watermark">© 2025 Sahnuri - Weather</div>
     </div>
   </div>
-  <footer style="text-align:center; margin-top: 20px;">
-    <p>© 2025 Muhamad Sahnuri - Weather</p>
-  </footer>
+  </div>
   <script src="script.js"></script>
 </body>
 

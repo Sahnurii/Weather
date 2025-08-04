@@ -10,6 +10,7 @@ const searchInput = document.querySelector('.search input');
 const searchButton = document.querySelector('.search button');
 const errorMessageElement = document.querySelector('.error-message');
 const suggestionsBox = document.querySelector('.suggestions-box');
+const loadingSpinner = document.querySelector('.loading-spinner');
 
 let allCities = []; // Untuk menyimpan data kota dari kota.json
 
@@ -24,6 +25,26 @@ const weatherDetails = {
     sunrise: document.querySelector('.weather-details ul li:nth-child(7)'),
     sunset: document.querySelector('.weather-details ul li:nth-child(8)'),
 };
+
+// === Tambahkan fungsi loading state ===
+function showLoading() {
+    loadingSpinner.style.display = 'flex';
+    tempElement.style.display = 'none';
+    locationElement.style.display = 'none';
+    datetimeElement.style.display = 'none';
+    weatherIconElement.style.display = 'none';
+    weatherDescriptionElement.style.display = 'none';
+}
+
+function hideLoading() {
+    loadingSpinner.style.display = 'none';
+    tempElement.style.display = '';
+    locationElement.style.display = '';
+    datetimeElement.style.display = '';
+    weatherIconElement.style.display = '';
+    weatherDescriptionElement.style.display = '';
+}
+// === END loading state ===
 
 // Fungsi untuk mendapatkan data kualitas udara (AQI)
 async function getAirQuality(lat, lon) {
@@ -80,6 +101,7 @@ function displayError(message) {
 
 // Fungsi untuk mendapatkan data cuaca
 async function getWeather(city) {
+    showLoading(); // Tampilkan loading sebelum fetch
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
     try {
@@ -89,12 +111,13 @@ async function getWeather(city) {
         }
         const data = await response.json();
         updateUI(data);
-        getForecast(city);
+        await getForecast(city); // Tunggu forecast selesai
     } catch (error) {
         console.error("Error fetching weather data:", error);
         displayError(error.message);
-        // Ensure the app container is visible even if weather data fetching fails
         document.querySelector('.app-container').classList.add('loaded');
+    } finally {
+        hideLoading(); // Sembunyikan loading setelah selesai
     }
 }
 
@@ -396,6 +419,7 @@ document.addEventListener('click', (e) => {
 
 // Fungsi untuk mendapatkan cuaca berdasarkan lokasi pengguna
 function getWeatherByLocation() {
+    showLoading(); // Tampilkan loading saat mulai
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(async (position) => {
             const lat = position.coords.latitude;
@@ -409,23 +433,58 @@ function getWeatherByLocation() {
                 }
                 const data = await response.json();
                 if (data.length > 0) {
-                    getWeather(data[0].name); // Ambil nama kota pertama
+                    await getWeather(data[0].name); // Ambil nama kota pertama
                 } else {
                     displayError('Tidak dapat menemukan kota dari lokasi Anda. Memuat cuaca untuk Jakarta.');
-                    getWeather('Jakarta'); // Fallback jika tidak ada kota ditemukan
+                    await getWeather('Jakarta'); // Fallback jika tidak ada kota ditemukan
                 }
             } catch (error) {
                 console.error("Error reverse geocoding:", error);
                 displayError('Gagal mendapatkan lokasi Anda. Memuat cuaca untuk Jakarta.');
-                getWeather('Jakarta'); // Fallback jika ada error API
+                await getWeather('Jakarta'); // Fallback jika ada error API
+            } finally {
+                hideLoading(); // Sembunyikan loading setelah selesai
             }
-        }, (error) => {
+        }, async (error) => {
             console.error("Error getting geolocation:", error);
             displayError('Izin lokasi ditolak atau terjadi kesalahan. Memuat cuaca untuk Jakarta.');
-            getWeather('Jakarta'); // Fallback jika pengguna menolak atau ada error geolocation
+            await getWeather('Jakarta'); // Fallback jika pengguna menolak atau ada error geolocation
+            hideLoading(); // Sembunyikan loading setelah selesai
         });
     } else {
         displayError('Geolocation tidak didukung oleh browser Anda. Memuat cuaca untuk Jakarta.');
         getWeather('Jakarta'); // Fallback jika geolocation tidak didukung
+        hideLoading(); // Sembunyikan loading setelah selesai
     }
 }
+
+const themeBtn = document.getElementById('toggle-theme');
+
+themeBtn.addEventListener('click', () => {
+  document.body.classList.toggle('dark-mode');
+  // Toggle class pada .main dan .sidebar jika ingin efek lebih
+  document.querySelector('.main').classList.toggle('dark-mode');
+  document.querySelector('.sidebar').classList.toggle('dark-mode');
+  // Ganti teks tombol
+  if (document.body.classList.contains('dark-mode')) {
+    themeBtn.textContent = '☀️ Light Mode';
+  } else {
+    themeBtn.textContent = '🌙 Dark Mode';
+  }
+});
+
+// Optional: Simpan preferensi theme di localStorage
+window.addEventListener('load', () => {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') {
+    document.body.classList.add('dark-mode');
+    document.querySelector('.main').classList.add('dark-mode');
+    document.querySelector('.sidebar').classList.add('dark-mode');
+    themeBtn.textContent = '☀️ Light Mode';
+  }
+});
+
+themeBtn.addEventListener('click', () => {
+  const isDark = document.body.classList.contains('dark-mode');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+});
