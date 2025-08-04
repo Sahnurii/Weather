@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather App</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <div class="main">
+      <div class="temp"></div>
+      <div class="location"></div>
+      <div class="datetime"></div>
+      <div class="weather-icon">&#x2601;</div>
+    </div>
+
+    <div class="sidebar">
+      <div class="error-message"></div>
+      <div class="search">
+        <input type="text" placeholder="Search Location..." />
+        <button>&#128269;</button>
+        <div class="suggestions-box"></div>
+      </div>
+
+      <div class="weather-details">
+        <h3>Weather Details...</h3>
+        <p></p>
+        <ul>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li><img src="icons/lungs.svg" /></li>
+          <li><img src="icons/sunrise.svg" /></li>
+          <li><img src="icons/sunset.svg" /></li>
+        </ul>
+      </div>
+
+      <hr />
+
+      <div class="forecast">
+        <h3>Today's Weather Forecast...</h3>
+        <div class="forecast-items"></div>
+      </div>
+
+      <hr />
+
+      <div class="hourly-forecast">
+        <h3>Hourly Forecast...</h3>
+        <div class="hourly-forecast-items"></div>
+      </div>
+
+      <hr />
+
+      <div class="favorite-cities">
+        <h3>Favorite Cities</h3>
+        <ul class="favorite-cities-list"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
