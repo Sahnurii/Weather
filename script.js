@@ -5,6 +5,7 @@ const tempElement = document.querySelector('.temp');
 const locationElement = document.querySelector('.location');
 const datetimeElement = document.querySelector('.datetime');
 const weatherIconElement = document.querySelector('.weather-icon');
+const weatherDescriptionElement = document.querySelector('.weather-description');
 const searchInput = document.querySelector('.search input');
 const searchButton = document.querySelector('.search button');
 const errorMessageElement = document.querySelector('.error-message');
@@ -92,6 +93,8 @@ async function getWeather(city) {
     } catch (error) {
         console.error("Error fetching weather data:", error);
         displayError(error.message);
+        // Ensure the app container is visible even if weather data fetching fails
+        document.querySelector('.app-container').classList.add('loaded');
     }
 }
 
@@ -224,6 +227,7 @@ function updateUI(data) {
     locationElement.textContent = data.name;
     datetimeElement.textContent = getFormattedDateTime();
     weatherIconElement.innerHTML = getWeatherIcon(data.weather[0].icon);
+    weatherDescriptionElement.textContent = data.weather[0].description.toUpperCase();
 
     // Detail Cuaca
     weatherDetails.description.textContent = data.weather[0].description.toUpperCase();
